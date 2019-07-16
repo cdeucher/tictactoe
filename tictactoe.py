@@ -1,4 +1,4 @@
-import random
+import random, time
 import numpy as np
 
 from tools import encode_state,decode_state
@@ -56,26 +56,7 @@ class World_base:
             return encode_state( row1,row2,row3,row4,row5,row6,row7,row8,player )  
 
       def update_state(self, next_state, action):
-         row1,row2,row3,row4,row5,row6,row7,row8,row9 = decode_state(self.current_state)  
-         self.P[next_state] = [0.3,0.5,0.3, 0.5,0.7,0.3, 0.3,0.5,0.3] 
-         if row1 != 0 or action == 0:
-            self.P[next_state, 0] = -100
-         if row2 != 0  or action == 1:
-            self.P[next_state, 1] = -100
-         if row3 != 0  or action == 2:
-            self.P[next_state, 2] = -100
-         if row4 != 0  or action == 3:
-            self.P[next_state, 3] = -100
-         if row5 != 0  or action == 4:
-            self.P[next_state, 4] = -100
-         if row6 != 0  or action == 5:
-            self.P[next_state, 5] = -100
-         if row7 != 0  or action == 6:
-            self.P[next_state, 6] = -100
-         if row8 != 0  or action == 7:
-            self.P[next_state, 7] = -100
-         if row9 != 0  or action == 8:
-            self.P[next_state, 8] = -100                                                                  
+         self.P[self.current_state, action] = None                                                            
 
       def reward(self, action, next_state, reward):
          old_value = self.q_table[self.current_state, action]
@@ -90,28 +71,31 @@ class World_base:
          #    row1,row2,row3,row4,row5,row6,row7,row8,row9 = decode_state(state)
          #    print(state, row1,row2,row3,row4,row5,row6,row7,row8,row9 )
          base_reward = [0, 1, -1]
-         for epocks in range(20):
-            penalties, reward, = 0, 0
-            player = 1
-            world.current_state = encode_state(0,0,0, 0,player,0, 0,0,0)
-            self.P[world.current_state] = [0.3,0.5,0.3, 0.5,0.7,0.3, 0.3,0.5,0.3]  
+         for epocks in range(1):
+            penalties, reward, player, = 0, 0, 1
+            self.current_state = encode_state(0,0,0, 0,player,0, 0,0,0)
+            self.P = [1,2,3, 4,5,6, 7,8,9]  
             done = False     
             count = 0     
             while not done:   
                count += 1          
-               if random.uniform(0, 1) < epsilon:
-                     action = np.argmax(self.q_table[random.randint(0,2)]) # Explore action space
+               if random.uniform(0, 1) < epsilon:   
+                     sort = random.randint(9)                  
+                     action = self.P[ self.current_state ]
+                     print( 'action P ',self.P[ self.current_state ], action ) 
                else:
-                     action = np.argmax(self.q_table[self.current_state]) # Exploit learned values
-                                 
-               action = np.argmax( self.P[ self.current_state ] )
-                  
-               print( 'action',self.P[ self.current_state ], action ) 
+                     action = np.argmax( self.q_table[self.current_state] ) # Exploit learned values
+                     print( 'action P --', self.P[ self.current_state, action]) 
+                     if self.P[ self.current_state, action] > 0 :
+                        print( 'action Q ', self.P[ self.current_state, action] , action )
+                     else :
+                        action = np.argmax( self.P[ self.current_state ] ) 
+                        print( 'action P ',self.P[ self.current_state ], action )   
 
                next_state = self.try_action(action, player)
-               reward, done = self.win_or_loss(next_state, player, base_reward)
+               reward, done = self.win_or_loss(self.current_state, player, base_reward)
 
-               print( 'next_state',next_state )  
+               print( 'win_or_loss',reward, done, action )  
 
                self.reward(action, next_state, reward)
 
@@ -125,10 +109,10 @@ class World_base:
                   player = 1
 
                self.debug()
-
                if next_state == 0:
-                  done = False 
+                  done = True 
 
+               time.sleep(1)
             #end While   
             print('epocks',epocks, 'count',count)
          #end FOR epocks
