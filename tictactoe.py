@@ -7,9 +7,7 @@ class World_base:
       def __init__(self): 
          self.width = 500000 
          self.states= 9
-         self.current_state = 0
          self.q_table = np.zeros([self.width, self.states])
-         self.P = np.zeros([self.width, self.states])
 
       def win_or_loss(self, state, player, base_reward): 
          row1,row2,row3,row4,row5,row6,row7,row8,row9 = decode_state(state)
@@ -81,11 +79,11 @@ class World_base:
          return(action)
 
       def try_train(self, player):
-         discount = 0.9
+         discount      = 0.9
          learning_rate = 0.1         
          base_reward = [0.01, 5, 10]
          for epocks in range(10000):
-            state = random.choice([0])
+            state   = random.choice([0])
             action  = random.choice([0,1,2, 3,4,5, 6,7,8])
             done    = False
             while not done:   
@@ -124,21 +122,25 @@ class World_base:
       def play(self):
          state  = encode_state(0,0,0, 0,0,0, 0,0,0)
          self.debug(state)
-         print(np.argmax( self.q_table[state] ) , self.q_table[state] )
+         print('(4)',np.argmax( self.q_table[state] ) , self.q_table[state] )
 
-         state  = encode_state(1,0,0, 2,2,0, 0,1,0)
+         state  = encode_state(1,0,0, 
+                               2,2,0, 
+                               0,1,0)
          self.debug(state)
-         print(np.argmax( self.q_table[state] ) ,  self.q_table[state] )
+         print('(5)',np.argmax( self.q_table[state] ) ,  self.q_table[state] )
 
-         state  = encode_state(1,0,2, 0,1,2, 0,0,0)
+         state  = encode_state(1,0,2, 
+                               0,1,2, 
+                               0,0,0)
          self.debug(state)
-         print(np.argmax( self.q_table[state] ) ,  self.q_table[state] )      
+         print('(8)',np.argmax( self.q_table[state] ) ,  self.q_table[state] )      
 
          state  = encode_state(1,2,2, 
                                0,2,1, 
                                0,1,0)
          self.debug(state)
-         print(np.argmax( self.q_table[state] ) ,  self.q_table[state] )    
+         print('(6)',np.argmax( self.q_table[state] ) ,  self.q_table[state] )    
                      
 world = World_base() 
 
