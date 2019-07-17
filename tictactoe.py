@@ -32,7 +32,7 @@ class World_base:
          if row7 == player and row5 == player and row3 == player:
             return base_reward[player], True   
 
-         return 0.1, False
+         return base_reward[0], False
       #end win_or_loss   
 
       def try_action(self, action, player, state):
@@ -80,13 +80,11 @@ class World_base:
             action.append(8)                                                                                 
          return(action)
 
-      def try_train(self):
+      def try_train(self, player):
          discount = 0.9
-         learning_rate = 0.1
-         player = 1
-         base_reward = [-0.1, 1, 5]
-         for epocks in range(50000):
-            # get starting place
+         learning_rate = 0.1         
+         base_reward = [0.01, 5, 10]
+         for epocks in range(10000):
             state = random.choice([0])
             action  = random.choice([0,1,2, 3,4,5, 6,7,8])
             done    = False
@@ -121,24 +119,34 @@ class World_base:
          print(row1,row2,row3)
          print(row4,row5,row6)
          print(row7,row8,row9)  
-         print(self.q_table[state])      
+         #print(self.q_table[state])      
 
       def play(self):
          state  = encode_state(0,0,0, 0,0,0, 0,0,0)
-         print( self.q_table[state] )
+         self.debug(state)
+         print(np.argmax( self.q_table[state] ) , self.q_table[state] )
 
-         state  = encode_state(1,0,0, 1,2,0, 0,0,0)
-         print( self.q_table[state] )
+         state  = encode_state(1,0,0, 2,2,0, 0,1,0)
+         self.debug(state)
+         print(np.argmax( self.q_table[state] ) ,  self.q_table[state] )
 
          state  = encode_state(1,0,2, 0,1,2, 0,0,0)
-         print( self.q_table[state] )         
+         self.debug(state)
+         print(np.argmax( self.q_table[state] ) ,  self.q_table[state] )      
+
+         state  = encode_state(1,2,2, 
+                               0,2,1, 
+                               0,1,0)
+         self.debug(state)
+         print(np.argmax( self.q_table[state] ) ,  self.q_table[state] )    
                      
 world = World_base() 
 
 alpha = 0.1
 gamma = 0.6
 epsilon = 0.1            
-world.try_train()
+world.try_train(1)
+world.try_train(2)
 world.play()
 
 
