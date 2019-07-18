@@ -1,13 +1,18 @@
 import random, time
 import numpy as np
-
+import json
+from flask import Flask, escape, request,render_template
 from tools import encode_state,decode_state
+
+app = Flask(__name__)
 
 class World_base:
       def __init__(self): 
          self.width = 500000 
          self.states= 9
          self.q_table = np.zeros([self.width, self.states])
+         self.current = 0
+         self.action  = 0
 
       def win_or_loss(self, state, player, base_reward): 
          row1,row2,row3,row4,row5,row6,row7,row8,row9 = decode_state(state)
@@ -81,12 +86,11 @@ class World_base:
       def try_train(self, player):
          discount      = 0.9
          learning_rate = 0.1         
-         base_reward = [0.01, 100,10]
-         for epocks in range(10000):
-            state   = random.choice([0])
-            #state   = encode_state(0,0,0, 0,player,0, 0,0,0)
-            action  = random.choice([0,1,2, 3,4,5, 6,7,8])
+         base_reward = [0, 10, 5]
+         for epocks in range(20000):
+            state   = 0
             done    = False
+            player  = 1    
             while not done:   
                possible_actions = self.getAllPossibleNextAction(state) 
                if possible_actions :  
@@ -100,18 +104,39 @@ class World_base:
 
                   #print('player, state, action',player, state, action, self.q_table[state][action])    
                   state = next_state   
-                  #if epocks > 300000:                                             
-                  #   self.debug(state)
+
                   if player == 1 :
                      player = 2
                   else:
                      player = 1                      
-               else: #end FOR
+                  #end IF
+               else: 
                   done = True
+               #end IF   
             #end While   
             print('epocks',epocks)
          #end FOR epocks
       #end Train
+      def Play2(self, player, state):
+         discount      = 0.9
+         learning_rate = 0.1         
+         base_reward = [0, 10, 5]
+         possible_actions = self.getAllPossibleNextAction(state) 
+         if possible_actions : 
+            action = np.argmax( self.q_table[state] )
+            next_state = self.try_action(action, player, state)
+            reward, done = self.win_or_loss(next_state, player, base_reward)    
+
+            #self.q_table[state][action] = self.q_table[state][action] + learning_rate * (reward + 
+            #      discount * max(self.q_table[next_state]) - self.q_table[state][action])
+
+            if done == True :
+               next_state = 0
+            
+            return next_state, action
+         #end IF
+         return 0   
+      #end Play2
 
       def debug(self, state):
          row1,row2,row3,row4,row5,row6,row7,row8,row9 = decode_state(state)
@@ -121,42 +146,58 @@ class World_base:
          #print(self.q_table[state])      
 
       def play(self):
-         state  = encode_state(0,0,0, 0,0,0, 0,0,0)
-         self.debug(state)
-         print('(4)',np.argmax( self.q_table[state] ) , self.q_table[state] )
-
-         state  = encode_state(1,0,2, 
-                               0,1,0, 
-                               0,0,2)
-         self.debug(state)
-         print('(5)',np.argmax( self.q_table[state] ) ,  self.q_table[state] )
-
-         state  = encode_state(0,0,2, 
-                               0,1,0, 
-                               2,0,1)
-         self.debug(state)
-         print('(0)',np.argmax( self.q_table[state] ) ,  self.q_table[state] )      
-
-         state  = encode_state(2,1,2, 
-                               1,2,0, 
-                               1,0,0)
-         self.debug(state)
-         print('(8)',np.argmax( self.q_table[state] ) ,  self.q_table[state] )    
-
-         state  = encode_state(1,0,2, 
+         state  = encode_state(1,0,0, 
                                2,1,0, 
-                               0,1,2)
+                               2,1,2)
          self.debug(state)
          print('(1)',np.argmax( self.q_table[state] ) ,  self.q_table[state] )           
                      
 world = World_base() 
 
-alpha = 0.1
-gamma = 0.6
-epsilon = 0.1            
 world.try_train(1)
-#world.try_train(2)
 world.play()
 
+@app.route('/')
+def index():
+    return render_template('index.html')
 
+@app.route('/handle/<action>/<state>', methods=['POST','GET'])
+def handle(action, state):
+   state  = int(state)
+   action = int(action)
+   discount      = 0.9
+   learning_rate = 0.1    
+   base_reward = [0.01, -100, 5]
+   my_state = world.try_action(action, 1, state)
+   reward, done = world.win_or_loss(my_state, 1, base_reward)
+
+   print( ' old ',reward, world.q_table[world.current][world.action])
+   world.q_table[world.current][world.action] = world.q_table[state][world.action] + learning_rate * (reward + 
+         discount * max(world.q_table[my_state]) - world.q_table[world.current][world.action])
+   print( ' new ',reward, world.q_table[world.current][world.action])
+   if done == False :
+      new_state, action = world.Play2(2, my_state)
+      world.current = new_state
+      world.action  = action
+   else :
+      new_state = 0   
+
+   row1,row2,row3,row4,row5,row6,row7,row8,row9 = decode_state(new_state)
+
+   ret = {
+         "row1": row1,"re1":world.q_table[my_state][0],
+         "row2": row2,"re2":world.q_table[my_state][1],
+         "row3": row3,"re3":world.q_table[my_state][2],
+         "row4": row4,"re4":world.q_table[my_state][3],
+         "row5": row5,"re5":world.q_table[my_state][4],
+         "row6": row6,"re6":world.q_table[my_state][5],
+         "row7": row7,"re7":world.q_table[my_state][6],
+         "row8": row8,"re8":world.q_table[my_state][7],
+         "row9": row9,"re9":world.q_table[my_state][8],
+         "new_state":new_state
+   }
+   return json.dumps(ret)
+
+if __name__ == "__main__":
+    app.run(debug=True)    
 
