@@ -34,6 +34,19 @@
     <script>
        local_state = 0;  
        my_state = 0
+       function winx(row){
+          if(play[row] == 0){
+              play[row] = ' ';
+              $('#'+row).attr("disabled", false);
+          }else{
+              $('#'+row).attr("disabled", true);
+              if(play[row] == 1)
+                play[row] = 'X';
+              if(play[row] == 2)
+                play[row] = 'O';              
+          }   
+          $('#'+row).html(play[row]);         
+       }
        function send(action){ 
          $.post("http://172.16.17.41:9800/handle/"+action+"/"+local_state+"/"+my_state, function( data ) {
                play = JSON.parse(data);
@@ -45,25 +58,8 @@
                $('#defeat').html(play.win[2]);
                $('#draw').html(play.win[0]);
 
-               play.row1 = (play.row1 == 0) ? ' ' : (play.row1 == 1) ? 'X' : 'O';
-               play.row2 = (play.row2 == 0) ? ' ' : (play.row2 == 1) ? 'X' : 'O';
-               play.row3 = (play.row3 == 0) ? ' ' : (play.row3 == 1) ? 'X' : 'O';
-               play.row4 = (play.row4 == 0) ? ' ' : (play.row4 == 1) ? 'X' : 'O';
-               play.row5 = (play.row5 == 0) ? ' ' : (play.row5 == 1) ? 'X' : 'O';
-               play.row6 = (play.row6 == 0) ? ' ' : (play.row6 == 1) ? 'X' : 'O';
-               play.row7 = (play.row7 == 0) ? ' ' : (play.row7 == 1) ? 'X' : 'O';
-               play.row8 = (play.row8 == 0) ? ' ' : (play.row8 == 1) ? 'X' : 'O';
-               play.row9 = (play.row9 == 0) ? ' ' : (play.row9 == 1) ? 'X' : 'O';
-
-               $('#row1').html(play.row1);
-               $('#row2').html(play.row2);
-               $('#row3').html(play.row3);
-               $('#row4').html(play.row4);
-               $('#row5').html(play.row5);
-               $('#row6').html(play.row6);
-               $('#row7').html(play.row7);
-               $('#row8').html(play.row8);
-               $('#row9').html(play.row9);
+              for(let r in play) 
+                if(r != 'win')winx(r)                                 
          });
        } 
     </script>
