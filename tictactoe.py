@@ -91,14 +91,14 @@ class World_base:
          print('win',win)
          return win
 
-      def try_train(self):         
+      def try_train(self, number):         
          discount      = 0.9
          learning_rate = 0.1                 
          #print(base_reward[0][0],base_reward[0])
          alpha = 0.1
          gamma = 0.6
          win   = 0
-         for epocks in range(20000):
+         for epocks in range(number):
             state   = 0
             done    = False  
             player  = 1              
@@ -177,12 +177,23 @@ class World_base:
 
 base_reward = [[0.01, 0, 0],[0.01, 50, 5],[0.01, 5, 50]]                     
 world = World_base() 
-world.try_train()
+world.try_train(200)
 world.play()
 
 @app.route('/')
 def index():
     return render_template('index.html')
+
+@app.route('/train/<number>')
+def train(number):
+    number = int(number)
+    world.try_train(number)
+    return render_template('index.html')  
+
+@app.route('/clear')
+def clean():
+    world.q_table = np.zeros([world.width, world.states])
+    return render_template('index.html')    
 
 @app.route('/handle/<action>/<statePlayerB>/<statePlayerA>', methods=['POST','GET'])
 def handle(action, statePlayerB, statePlayerA):
