@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+  </head>
+  <body>
+
+
+    <div class="card" style="width: 18rem;">
+        <div class="card-body">         
+                <button id="row1" type="button" onclick="send(0)" class="btn btn-lg btn-primary" >0</button>
+                <button id="row2" type="button" onclick="send(1)" class="btn btn-lg btn-primary" >0</button>
+                <button id="row3" type="button" onclick="send(2)" class="btn btn-lg btn-primary" >0</button>
+            <br><button id="row4" type="button" onclick="send(3)" class="btn btn-lg btn-primary" >0</button>
+                <button id="row5" type="button" onclick="send(4)" class="btn btn-lg btn-primary" >0</button>
+                <button id="row6" type="button" onclick="send(5)" class="btn btn-lg btn-primary" >0</button>
+            <br><button id="row7" type="button" onclick="send(6)" class="btn btn-lg btn-primary" >0</button>
+                <button id="row8" type="button" onclick="send(7)" class="btn btn-lg btn-primary" >0</button>
+                <button id="row9" type="button" onclick="send(8)" class="btn btn-lg btn-primary" >0</button>
+        </div>
+    <div>
+
+    <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+    <script>
+       local_state = 0;  
+       function send(action){ 
+         $.post("http://127.0.0.1:5000/handle/"+action+"/"+local_state, function( data ) {
+               play = JSON.parse(data)
+               console.log(play)
+               local_state = play.new_state;
+               $('#row1').html(play.row1)
+               $('#row2').html(play.row2)
+               $('#row3').html(play.row3)
+               $('#row4').html(play.row4)
+               $('#row5').html(play.row5)
+               $('#row6').html(play.row6)
+               $('#row7').html(play.row7)
+               $('#row8').html(play.row8)
+               $('#row9').html(play.row9)
+         });
+       } 
+    </script>
+  </body>
+</html>
