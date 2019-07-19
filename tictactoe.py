@@ -4,7 +4,7 @@ import json
 from flask import Flask, escape, request,render_template
 from tools import encode_state,decode_state
 
-app = Flask(__name__)
+app = Flask(__name__, static_url_path='/static')
 
 class World_base:
       def __init__(self): 
@@ -146,9 +146,6 @@ class World_base:
             self.q_table[last_state][action] = self.q_table[last_state][action] + learning_rate * (reward + 
                         discount * max(self.q_table[next_state]) - self.q_table[last_state][action])   
 
-            if done == True :
-               next_state = 0
-
             return next_state, done
          #end IF
          return 0, True   
@@ -175,7 +172,8 @@ class World_base:
          print('(2)',np.argmax( self.q_table[state] ) ,  self.q_table[state] )                  
                      
 
-base_reward = [[0.01, 0, 0],[0.01, 50, 5],[0.01, 5, 50]]                     
+base_reward = [[0.01, 0, 0],[0.01, 50, 5],[0.01, 5, 50]]    
+win         = [0,0,0]                 
 world = World_base() 
 world.try_train(200)
 world.play()
@@ -183,6 +181,10 @@ world.play()
 @app.route('/')
 def index():
     return render_template('index.html')
+
+@app.route('/templates')
+def root():
+    return app.send_static_file('templates/*')
 
 @app.route('/train/<number>')
 def train(number):
@@ -201,7 +203,7 @@ def handle(action, statePlayerB, statePlayerA):
    statePlayerA  = int(statePlayerA)
    action        = int(action)
    discount      = 0.9
-   learning_rate = 0.1    
+   learning_rate = 0.1       
    my_state      = world.try_action(action, 1, statePlayerB)
    reward, done  = world.win_or_loss(my_state, 1, base_reward)
 
@@ -210,8 +212,15 @@ def handle(action, statePlayerB, statePlayerA):
 
    if done == False :
       new_state, done = world.Play2(2, my_state, statePlayerB)
+      if done == True and new_state == 0:         
+         win[0]   += 1      
+      elif done == True :         
+         win[2]   += 1      
+         new_state = 0 
    else :
-      new_state = 0   
+      new_state = 0 
+      win[1]   += 1  
+
 
    row1,row2,row3,row4,row5,row6,row7,row8,row9 = decode_state(new_state)
 
@@ -226,10 +235,11 @@ def handle(action, statePlayerB, statePlayerA):
          "row8": row8,"re8":world.q_table[my_state][7],"pe8":world.q_table[new_state][7],
          "row9": row9,"re9":world.q_table[my_state][8],"pe9":world.q_table[new_state][8],
          "new_state":new_state,
-         "my_state":my_state
+         "my_state":my_state,
+         "win":win
    }
    return json.dumps(ret)
 
 if __name__ == "__main__":
-    app.run(debug=True)    
+    app.run(debug=True, host='0.0.0.0', port=9800)    
 

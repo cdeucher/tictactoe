@@ -3,46 +3,67 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <link rel="stylesheet" href="http://172.16.17.41:9800/static/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
   </head>
   <body>
 
 
-    <div class="card" style="width: 18rem;">
-        <div class="card-body">         
-                <button id="row1" type="button" onclick="send(0)" class="btn btn-lg btn-primary" >0</button>
-                <button id="row2" type="button" onclick="send(1)" class="btn btn-lg btn-primary" >0</button>
-                <button id="row3" type="button" onclick="send(2)" class="btn btn-lg btn-primary" >0</button>
-            <br><button id="row4" type="button" onclick="send(3)" class="btn btn-lg btn-primary" >0</button>
-                <button id="row5" type="button" onclick="send(4)" class="btn btn-lg btn-primary" >0</button>
-                <button id="row6" type="button" onclick="send(5)" class="btn btn-lg btn-primary" >0</button>
-            <br><button id="row7" type="button" onclick="send(6)" class="btn btn-lg btn-primary" >0</button>
-                <button id="row8" type="button" onclick="send(7)" class="btn btn-lg btn-primary" >0</button>
-                <button id="row9" type="button" onclick="send(8)" class="btn btn-lg btn-primary" >0</button>
+    <div class="card" style="width: 99%;">
+        <div class="card-body" style="margin-left: 30%;">
+            <h1>Supere a I.A da TI (Jogo da velha)</h1>
+        </div>
+        <div class="card-body">  
+            Vitórias:<div id="win"></div>Derrotas:<div id="defeat"></div>Empates:<div id="draw"></div>
+            <div id="play" style="margin-left: 30%;">     
+                <button id="row1" style="width: 120px;height: 120px;margin: 10px;" type="button" onclick="send(0)" class="btn btn-lg btn-primary" ></button>
+                <button id="row2" style="width: 120px;height: 120px;margin: 10px;" type="button" onclick="send(1)" class="btn btn-lg btn-primary" ></button>
+                <button id="row3" style="width: 120px;height: 120px;margin: 10px;" type="button" onclick="send(2)" class="btn btn-lg btn-primary" ></button>
+            <br><button id="row4" style="width: 120px;height: 120px;margin: 10px;" type="button" onclick="send(3)" class="btn btn-lg btn-primary" ></button>
+                <button id="row5" style="width: 120px;height: 120px;margin: 10px;" type="button" onclick="send(4)" class="btn btn-lg btn-primary" ></button>
+                <button id="row6" style="width: 120px;height: 120px;margin: 10px;" type="button" onclick="send(5)" class="btn btn-lg btn-primary" ></button>
+            <br><button id="row7" style="width: 120px;height: 120px;margin: 10px;" type="button" onclick="send(6)" class="btn btn-lg btn-primary" ></button>
+                <button id="row8" style="width: 120px;height: 120px;margin: 10px;" type="button" onclick="send(7)" class="btn btn-lg btn-primary" ></button>
+                <button id="row9" style="width: 120px;height: 120px;margin: 10px;" type="button" onclick="send(8)" class="btn btn-lg btn-primary" ></button>
+            </div>    
         </div>
     <div>
 
-    <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+    <script src="http://172.16.17.41:9800/static/jquery-3.3.1.min.js"></script>
+    <script src="http://172.16.17.41:9800/static/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+    <script src="http://172.16.17.41:9800/static/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
     <script>
        local_state = 0;  
        my_state = 0
        function send(action){ 
-         $.post("http://127.0.0.1:5000/handle/"+action+"/"+local_state+"/"+my_state, function( data ) {
-               play = JSON.parse(data)
-               console.log(play)
+         $.post("http://172.16.17.41:9800/handle/"+action+"/"+local_state+"/"+my_state, function( data ) {
+               play = JSON.parse(data);
+               console.log(play);
                local_state = play.new_state;
                my_state    = play.my_state;
-               $('#row1').html(play.row1)
-               $('#row2').html(play.row2)
-               $('#row3').html(play.row3)
-               $('#row4').html(play.row4)
-               $('#row5').html(play.row5)
-               $('#row6').html(play.row6)
-               $('#row7').html(play.row7)
-               $('#row8').html(play.row8)
-               $('#row9').html(play.row9)
+               win         = play.win;
+               $('#win').html(play.win[1]);
+               $('#defeat').html(play.win[2]);
+               $('#draw').html(play.win[0]);
+
+               play.row1 = (play.row1 == 0) ? ' ' : (play.row1 == 1) ? 'X' : 'O';
+               play.row2 = (play.row2 == 0) ? ' ' : (play.row2 == 1) ? 'X' : 'O';
+               play.row3 = (play.row3 == 0) ? ' ' : (play.row3 == 1) ? 'X' : 'O';
+               play.row4 = (play.row4 == 0) ? ' ' : (play.row4 == 1) ? 'X' : 'O';
+               play.row5 = (play.row5 == 0) ? ' ' : (play.row5 == 1) ? 'X' : 'O';
+               play.row6 = (play.row6 == 0) ? ' ' : (play.row6 == 1) ? 'X' : 'O';
+               play.row7 = (play.row7 == 0) ? ' ' : (play.row7 == 1) ? 'X' : 'O';
+               play.row8 = (play.row8 == 0) ? ' ' : (play.row8 == 1) ? 'X' : 'O';
+               play.row9 = (play.row9 == 0) ? ' ' : (play.row9 == 1) ? 'X' : 'O';
+
+               $('#row1').html(play.row1);
+               $('#row2').html(play.row2);
+               $('#row3').html(play.row3);
+               $('#row4').html(play.row4);
+               $('#row5').html(play.row5);
+               $('#row6').html(play.row6);
+               $('#row7').html(play.row7);
+               $('#row8').html(play.row8);
+               $('#row9').html(play.row9);
          });
        } 
     </script>
