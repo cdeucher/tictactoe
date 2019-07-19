@@ -27,11 +27,13 @@
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
     <script>
        local_state = 0;  
+       my_state = 0
        function send(action){ 
-         $.post("http://127.0.0.1:5000/handle/"+action+"/"+local_state, function( data ) {
+         $.post("http://127.0.0.1:5000/handle/"+action+"/"+local_state+"/"+my_state, function( data ) {
                play = JSON.parse(data)
                console.log(play)
                local_state = play.new_state;
+               my_state    = play.my_state;
                $('#row1').html(play.row1)
                $('#row2').html(play.row2)
                $('#row3').html(play.row3)

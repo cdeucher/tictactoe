@@ -18,25 +18,25 @@ class World_base:
       def win_or_loss(self, state, player, base_reward): 
          row1,row2,row3,row4,row5,row6,row7,row8,row9 = decode_state(state)
          if row1 == player and row2 == player and row3 == player:
-            return base_reward[player], True
+            return base_reward[player][player], True
          if row4 == player and row5 == player and row6 == player:
-            return base_reward[player], True
+            return base_reward[player][player], True
          if row7 == player and row8 == player and row9 == player:
-            return base_reward[player], True
+            return base_reward[player][player], True
 
          if row1 == player and row4 == player and row7 == player:
-            return base_reward[player], True
+            return base_reward[player][player], True
          if row2 == player and row5 == player and row8 == player:
-            return base_reward[player], True
+            return base_reward[player][player], True
          if row3 == player and row6 == player and row9 == player:
-            return base_reward[player], True                                    
+            return base_reward[player][player], True                                    
 
          if row1 == player and row5 == player and row9 == player:
-            return base_reward[player], True
+            return base_reward[player][player], True
          if row7 == player and row5 == player and row3 == player:
-            return base_reward[player], True   
+            return base_reward[player][player], True   
 
-         return base_reward[0], False
+         return base_reward[0][0], False
       #end win_or_loss   
 
       def try_action(self, action, player, state):
@@ -93,12 +93,12 @@ class World_base:
 
       def try_train(self):         
          discount      = 0.9
-         learning_rate = 0.1         
-         base_reward = [0.01, 5, -5]
+         learning_rate = 0.1                 
+         #print(base_reward[0][0],base_reward[0])
          alpha = 0.1
          gamma = 0.6
          win   = 0
-         for epocks in range(2000):
+         for epocks in range(20000):
             state   = 0
             done    = False  
             player  = 1              
@@ -109,20 +109,19 @@ class World_base:
                if possible_actions :  
                   action = random.choice(possible_actions) # Explore action space                              
                   next_state = self.try_action(action, player, state)
-                  #print('next_state',next_state)
-                  reward, done = self.win_or_loss(next_state, player, base_reward)
+                  reward, done = self.win_or_loss(next_state, player, base_reward)                  
                   #if done :
                   #   win = self.win(win, state, next_state)
                   if player == 1 :
-                     player = 2
+                     player = 2                  
                      self.q_table[oldA][action] = self.q_table[oldA][action] + learning_rate * (reward + 
-                          discount * max(self.q_table[next_state]) - self.q_table[oldA][action])                      
-                     oldA   = state
+                        discount * max(self.q_table[next_state]) - self.q_table[oldA][action]) 
+                     oldA = next_state   
                   else :
-                     player = 1
+                     player = 1                   
                      self.q_table[oldB][action] = self.q_table[oldB][action] + learning_rate * (reward + 
-                          discount * max(self.q_table[next_state]) - self.q_table[oldB][action])                      
-                     oldB   = state                       
+                        discount * max(self.q_table[next_state]) - self.q_table[oldB][action])                      
+                     oldB = next_state 
 
                   state = next_state                 
                   #end IF
@@ -136,22 +135,19 @@ class World_base:
             print('epocks',epocks)
          #end FOR epocks
       #end Train
-      def Play2(self, player, state):
+      def Play2(self, player, state, last_state):
          discount      = 0.9
          learning_rate = 0.1         
-         base_reward = [0, -5, 5]
          possible_actions = self.getAllPossibleNextAction(state) 
          if possible_actions : 
             action = np.argmax( self.q_table[state] )
             next_state = self.try_action(action, player, state)
             reward, done = self.win_or_loss(next_state, player, base_reward) 
-            self.q_table[self.oldPlayer2][action] = self.q_table[self.oldPlayer2][action] + learning_rate * (reward + 
-                        discount * max(self.q_table[next_state]) - self.q_table[self.oldPlayer2][action])   
+            self.q_table[last_state][action] = self.q_table[last_state][action] + learning_rate * (reward + 
+                        discount * max(self.q_table[next_state]) - self.q_table[last_state][action])   
 
             if done == True :
                next_state = 0
-            
-            self.oldPlayer2 = next_state
 
             return next_state, done
          #end IF
@@ -178,30 +174,31 @@ class World_base:
          self.debug(state)
          print('(2)',np.argmax( self.q_table[state] ) ,  self.q_table[state] )                  
                      
-world = World_base() 
 
-#world.try_train()
-#world.play()
+base_reward = [[0.01, 0, 0],[0.01, 50, 5],[0.01, 5, 50]]                     
+world = World_base() 
+world.try_train()
+world.play()
 
 @app.route('/')
 def index():
     return render_template('index.html')
 
-@app.route('/handle/<action>/<state>', methods=['POST','GET'])
-def handle(action, state):
-   state  = int(state)
-   action = int(action)
+@app.route('/handle/<action>/<statePlayerB>/<statePlayerA>', methods=['POST','GET'])
+def handle(action, statePlayerB, statePlayerA):
+   statePlayerB  = int(statePlayerB)
+   statePlayerA  = int(statePlayerA)
+   action        = int(action)
    discount      = 0.9
    learning_rate = 0.1    
-   base_reward = [0.01, 5, -5]
-   my_state = world.try_action(action, 1, state)
-   reward, done = world.win_or_loss(my_state, 1, base_reward)
+   my_state      = world.try_action(action, 1, statePlayerB)
+   reward, done  = world.win_or_loss(my_state, 1, base_reward)
 
-   world.q_table[state][action] = world.q_table[state][action] + learning_rate * (reward + 
-               discount * max(world.q_table[my_state]) - world.q_table[state][action])    
+   world.q_table[statePlayerA][action] = world.q_table[statePlayerA][action] + learning_rate * (reward + 
+               discount * max(world.q_table[my_state]) - world.q_table[statePlayerA][action])    
 
    if done == False :
-      new_state, done = world.Play2(2, my_state)
+      new_state, done = world.Play2(2, my_state, statePlayerB)
    else :
       new_state = 0   
 
@@ -217,7 +214,8 @@ def handle(action, state):
          "row7": row7,"re7":world.q_table[my_state][6],"pe7":world.q_table[new_state][6],
          "row8": row8,"re8":world.q_table[my_state][7],"pe8":world.q_table[new_state][7],
          "row9": row9,"re9":world.q_table[my_state][8],"pe9":world.q_table[new_state][8],
-         "new_state":new_state
+         "new_state":new_state,
+         "my_state":my_state
    }
    return json.dumps(ret)
 
