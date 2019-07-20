@@ -3,65 +3,103 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <link rel="stylesheet" href="http://172.16.17.41:9800/static/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <link rel="stylesheet" href="/static/bootstrap.min.css">
   </head>
   <body>
-
-
-    <div class="card" style="width: 99%;">
-        <div class="card-body" style="margin-left: 30%;">
+  <style>
+    #play{
+       min-width: 500px;
+    }
+  </style>  
+  <div class="container">  
+    <div class="row">
+        <div class="card-body">
             <h1>Supere a I.A da TI (Jogo da velha)</h1>
+        </div>  
+    </div> 
+    <div class="row">  
+        <div class="col col-lg-2">
+                <li class="list-group-item d-flex justify-content-between align-items-center">
+                  Vitórias (IA):
+                  <span id="win" class="badge badge-primary badge-pill" class="list-group-item"></span>
+                </li>
+                <li class="list-group-item d-flex justify-content-between align-items-center">
+                    Derrotas (IA):
+                    <span id="defeat" class="badge badge-primary badge-pill" class="list-group-item"></span>
+                </li>
+                <li class="list-group-item d-flex justify-content-between align-items-center">
+                    Empates:
+                    <span id="draw" class="badge badge-primary badge-pill" class="list-group-item"></span> 
+                </li>                     
         </div>
-        <div class="card-body">  
-            Vitórias:<div id="win"></div>Derrotas:<div id="defeat"></div>Empates:<div id="draw"></div>
-            <div id="play" style="margin-left: 30%;">     
-                <button id="row1" style="width: 120px;height: 120px;margin: 10px;" type="button" onclick="send(0)" class="btn btn-lg btn-primary" ></button>
-                <button id="row2" style="width: 120px;height: 120px;margin: 10px;" type="button" onclick="send(1)" class="btn btn-lg btn-primary" ></button>
-                <button id="row3" style="width: 120px;height: 120px;margin: 10px;" type="button" onclick="send(2)" class="btn btn-lg btn-primary" ></button>
-            <br><button id="row4" style="width: 120px;height: 120px;margin: 10px;" type="button" onclick="send(3)" class="btn btn-lg btn-primary" ></button>
-                <button id="row5" style="width: 120px;height: 120px;margin: 10px;" type="button" onclick="send(4)" class="btn btn-lg btn-primary" ></button>
-                <button id="row6" style="width: 120px;height: 120px;margin: 10px;" type="button" onclick="send(5)" class="btn btn-lg btn-primary" ></button>
-            <br><button id="row7" style="width: 120px;height: 120px;margin: 10px;" type="button" onclick="send(6)" class="btn btn-lg btn-primary" ></button>
-                <button id="row8" style="width: 120px;height: 120px;margin: 10px;" type="button" onclick="send(7)" class="btn btn-lg btn-primary" ></button>
-                <button id="row9" style="width: 120px;height: 120px;margin: 10px;" type="button" onclick="send(8)" class="btn btn-lg btn-primary" ></button>
-            </div>    
-        </div>
+        <div class="col-sm"> 
+              <div class="card-body">              
+                  <div id="play">     
+                      <button id="row1" style="width: 120px;height: 120px;margin: 10px;" type="button" onclick="send(0)" class="btn btn-lg btn-primary" ></button>
+                      <button id="row2" style="width: 120px;height: 120px;margin: 10px;" type="button" onclick="send(1)" class="btn btn-lg btn-primary" ></button>
+                      <button id="row3" style="width: 120px;height: 120px;margin: 10px;" type="button" onclick="send(2)" class="btn btn-lg btn-primary" ></button>
+                  <br><button id="row4" style="width: 120px;height: 120px;margin: 10px;" type="button" onclick="send(3)" class="btn btn-lg btn-primary" ></button>
+                      <button id="row5" style="width: 120px;height: 120px;margin: 10px;" type="button" onclick="send(4)" class="btn btn-lg btn-primary" ></button>
+                      <button id="row6" style="width: 120px;height: 120px;margin: 10px;" type="button" onclick="send(5)" class="btn btn-lg btn-primary" ></button>
+                  <br><button id="row7" style="width: 120px;height: 120px;margin: 10px;" type="button" onclick="send(6)" class="btn btn-lg btn-primary" ></button>
+                      <button id="row8" style="width: 120px;height: 120px;margin: 10px;" type="button" onclick="send(7)" class="btn btn-lg btn-primary" ></button>
+                      <button id="row9" style="width: 120px;height: 120px;margin: 10px;" type="button" onclick="send(8)" class="btn btn-lg btn-primary" ></button>
+                  </div>    
+              </div>
+          <div>
     <div>
+  <div>    
+    <script src="/static/jquery-3.3.1.min.js"></script>
+    <script src="/static/popper.min.js"></script>
+    <script src="/static/bootstrap.min.js"></script>
+    <script src="/static/lib.js"></script>
 
-    <script src="http://172.16.17.41:9800/static/jquery-3.3.1.min.js"></script>
-    <script src="http://172.16.17.41:9800/static/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
-    <script src="http://172.16.17.41:9800/static/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
-    <script>
-       local_state = 0;  
-       my_state = 0
-       function winx(row){
-          if(play[row] == 0){
-              play[row] = ' ';
-              $('#'+row).attr("disabled", false);
-          }else{
-              $('#'+row).attr("disabled", true);
-              if(play[row] == 1)
-                play[row] = 'X';
-              if(play[row] == 2)
-                play[row] = 'O';              
-          }   
-          $('#'+row).html(play[row]);         
-       }
-       function send(action){ 
-         $.post("http://172.16.17.41:9800/handle/"+action+"/"+local_state+"/"+my_state, function( data ) {
-               play = JSON.parse(data);
-               console.log(play);
-               local_state = play.new_state;
-               my_state    = play.my_state;
-               win         = play.win;
-               $('#win').html(play.win[1]);
-               $('#defeat').html(play.win[2]);
-               $('#draw').html(play.win[0]);
+    <!-- Central Modal Medium Success -->
+    <div class="modal fade" id="centralModalSuccess" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+      aria-hidden="true">
+      <div class="modal-lg modal-dialog modal-notify modal-success" role="document">
+        <!--Content-->
+        <div class="modal-content">
+          <!--Header-->
+          <div class="modal-header">
+            <p class="heading lead" id="player_win"></p>
 
-              for(let r in play) 
-                if(r != 'win')winx(r)                                 
-         });
-       } 
-    </script>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true" class="white-text">&times;</span>
+            </button>
+          </div>
+
+          <!--Body-->
+          <div class="modal-body">
+            <div class="container-fluid">
+              <div class="row">
+                <div class="col-sm-6">           
+                        <div id="play">     
+                            <button id="win_row1" style="width: 80px;height: 80px;margin: 10px;" type="button" class="btn btn-lg btn-primary" ></button>
+                            <button id="win_row2" style="width: 80px;height: 80px;margin: 10px;" type="button" class="btn btn-lg btn-primary" ></button>
+                            <button id="win_row3" style="width: 80px;height: 80px;margin: 10px;" type="button" class="btn btn-lg btn-primary" ></button>
+                        <br><button id="win_row4" style="width: 80px;height: 80px;margin: 10px;" type="button" class="btn btn-lg btn-primary" ></button>
+                            <button id="win_row5" style="width: 80px;height: 80px;margin: 10px;" type="button" class="btn btn-lg btn-primary" ></button>
+                            <button id="win_row6" style="width: 80px;height: 80px;margin: 10px;" type="button" class="btn btn-lg btn-primary" ></button>
+                        <br><button id="win_row7" style="width: 80px;height: 80px;margin: 10px;" type="button" class="btn btn-lg btn-primary" ></button>
+                            <button id="win_row8" style="width: 80px;height: 80px;margin: 10px;" type="button" class="btn btn-lg btn-primary" ></button>
+                            <button id="win_row9" style="width: 80px;height: 80px;margin: 10px;" type="button" class="btn btn-lg btn-primary" ></button>
+                        </div>    
+                </div>
+                <div class="col-md-2" id="review">                    
+                </div>                  
+              </div>  
+            </div>
+          </div>
+
+          <!--Footer-->
+          <div class="modal-footer justify-content-center">
+              <button type="button" class="btn btn-secondary" data-dismiss="modal">Nova Partida<i class="far fa-gem ml-1 text-white"></i></button>
+          </div>
+        </div>
+        <!--/.Content-->
+      </div>
+    </div>
+    <!-- Central Modal Medium Success-->    
   </body>
 </html>
