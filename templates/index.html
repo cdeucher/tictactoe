@@ -13,24 +13,40 @@
   </style>  
   <div class="container">  
     <div class="row">
-        <div class="card-body">
+        <div class="card-body" style="margin-left: 10%;">
             <h1>Supere a I.A da TI (Jogo da velha)</h1>
         </div>  
     </div> 
     <div class="row">  
-        <div class="col col-lg-2">
+        <div class="col col-lg-3" style="margin-top: 30px;"> 
                 <li class="list-group-item d-flex justify-content-between align-items-center">
-                  Vitórias (IA):
-                  <span id="win" class="badge badge-primary badge-pill" class="list-group-item"></span>
+                  <div class="col col-lg-1"></div>
+                  <div id="ia" class="col col-lg-9"><b>I.A (Fácil)</b></div>
+                </li>                
+                <li class="list-group-item d-flex justify-content-between align-items-center">
+                  <div class="col col-lg-8">Vitórias</div>
+                  <div class="col col-lg-3">
+                      <span id="win0" class="badge badge-primary badge-pill" class="list-group-item"></span>
+                  </div>
                 </li>
-                <li class="list-group-item d-flex justify-content-between align-items-center">
-                    Derrotas (IA):
-                    <span id="defeat" class="badge badge-primary badge-pill" class="list-group-item"></span>
+                <li class="list-group-item d-flex justify-content-between align-items-center">                    
+                    <div class="col col-lg-2">Derrotas</div>
+                    <div class="col col-lg-6">
+                        Fácil:<span id="defeat0" class="badge badge-primary badge-pill" class="list-group-item"></span>
+                        Médio:<span id="defeat1" class="badge badge-primary badge-pill" class="list-group-item"></span>
+                        Difícil:<span id="defeat2" class="badge badge-primary badge-pill" class="list-group-item"></span>
+                    </div>
                 </li>
-                <li class="list-group-item d-flex justify-content-between align-items-center">
-                    Empates:
-                    <span id="draw" class="badge badge-primary badge-pill" class="list-group-item"></span> 
-                </li>                     
+                <li class="list-group-item d-flex justify-content-between align-items-center">                    
+                    <div class="col col-lg-8">Empates:</div>
+                    <div class="col col-lg-3">
+                        <span id="draw0" class="badge badge-primary badge-pill" class="list-group-item"></span>
+                    </div>
+                </li>  
+                <button onclick="set_lvl(0)" style="font-size:12px; width: 60px;height: 40px;margin: 10px; padding:0px" type="button" class="btn btn-lg btn-primary" >Fácil</button>
+                <button onclick="set_lvl(1)" style="font-size:12px; width: 60px;height: 40px;margin: 10px; padding:0px" type="button" class="btn btn-lg btn-primary" >Médio</button>
+                <button onclick="set_lvl(2)" style="font-size:12px; width: 60px;height: 40px;margin: 10px; padding:0px" type="button" class="btn btn-lg btn-primary" >Dificíl</button>
+       
         </div>
         <div class="col-sm"> 
               <div class="card-body">              
@@ -73,7 +89,7 @@
           <div class="modal-body">
             <div class="container-fluid">
               <div class="row">
-                <div class="col-sm-6">           
+                <div class="col-sm-9">           
                         <div id="play">     
                             <button id="win_row1" style="width: 80px;height: 80px;margin: 10px;" type="button" class="btn btn-lg btn-primary" ></button>
                             <button id="win_row2" style="width: 80px;height: 80px;margin: 10px;" type="button" class="btn btn-lg btn-primary" ></button>
@@ -86,7 +102,7 @@
                             <button id="win_row9" style="width: 80px;height: 80px;margin: 10px;" type="button" class="btn btn-lg btn-primary" ></button>
                         </div>    
                 </div>
-                <div class="col-md-2" id="review">                    
+                <div class="col-md-3" id="review">                    
                 </div>                  
               </div>  
             </div>

@@ -1,7 +1,13 @@
 state_playerB = 0;  
 state_playerA = 0
 number_play   = 0
+global_lvl    = 0
 
+function set_lvl(lvl){
+   global_lvl = lvl
+   leg =['Fácil','Médio','Difícil']
+   $('#ia').html('<b>I.A ('+leg[global_lvl]+')</b>')
+}  
 function set_buttom(row, val){
    if(val == 0){
        val = ' ';
@@ -26,15 +32,15 @@ function win(player){
    });       
 }
 function send(action){ 
-  $.post("/handle/"+action+"/"+state_playerB+"/"+state_playerA, function( data ) {
+  $.post("/handle/"+action+"/"+state_playerB+"/"+state_playerA+"/"+global_lvl, function( data ) {
         play = JSON.parse(data);
         console.log(play);
         state_playerB = play.state_playerB;
         state_playerA = play.state_playerA;
         IA_win        = play.IA_win;
-        $('#win').html(play.IA_win[2]);
-        $('#defeat').html(play.IA_win[1]);
-        $('#draw').html(play.IA_win[0]);
+        $('#win'+global_lvl).html(play.IA_win[global_lvl][2]);
+        $('#defeat'+global_lvl).html(play.IA_win[global_lvl][1]);
+        $('#draw'+global_lvl).html(play.IA_win[global_lvl][0]);
 
        for(let r in play.rows) 
          set_buttom(r, play.rows[r])  
@@ -72,9 +78,11 @@ function update(state, prefix){
           state_playerB = play.state_playerB;
           state_playerA = play.state_playerA;
           IA_win        = play.IA_win;
-          $('#win').html(play.IA_win[2]);
-          $('#defeat').html(play.IA_win[1]);
-          $('#draw').html(play.IA_win[0]);
+          $('#win0').html(play.IA_win[0][2]);
+          $('#draw0').html(play.IA_win[0][0]);
+          $('#defeat0').html(play.IA_win[0][1]);          
+          $('#defeat1').html(play.IA_win[1][1]);          
+          $('#defeat2').html(play.IA_win[2][1]);          
   
          for(let r in play.rows) 
            set_buttom(prefix+r, play.rows[r])  

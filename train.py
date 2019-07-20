@@ -5,7 +5,7 @@ from tools import encode_state,decode_state, getAllPossibleNextAction, try_actio
 base_reward = [[0.01, 0, 0],[0.01, 50, 5],[0.01, 5, 50]]    
 state_playerB= 0
 state_playerA= 0
-IA_win       = [0,0,0]  
+IA_win       = [[0,0,0],[0,0,0],[0,0,0]]  
 
 class oTrain:
       def __init__(self): 
