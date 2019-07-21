@@ -2,14 +2,15 @@ import random, time
 import numpy as np
 from tools import encode_state,decode_state, getAllPossibleNextAction, try_action, win_or_loss
 
-base_reward = [[0.01, 0, 0],[0.01, 50, 5],[0.01, 5, 50]]    
+#base_reward = [[0.01, 0, 0],[0.01, 50, 5],[0.01, 5, 50]]  ##modo defencivo 
+base_reward = [[0.001, 0, 0],[0.001, 5, 10],[0.001, 10, 5]]  ##modo agrecivo  
 state_playerB= 0
 state_playerA= 0
 IA_win       = [[0,0,0],[0,0,0],[0,0,0]]  
 
 class oTrain:
       def __init__(self): 
-         self.width = 50000
+         self.width = 20000
          self.states= 9
          self.q_table = np.zeros([self.width, self.states])
          self.current = 0
@@ -31,7 +32,12 @@ class oTrain:
             while not done:   
                possible_actions = getAllPossibleNextAction(state) 
                if possible_actions :  
+                  #if random.uniform(0, 1) < 0.2:
+                  #   action       = np.argmax( self.q_table[state] )
+                  #else :
+                  #   action       = random.choice(possible_actions) # Explore action space                              
                   action       = random.choice(possible_actions) # Explore action space                              
+
                   next_state   = try_action(action, player, state)
                   reward, done = win_or_loss(next_state, player, base_reward)                  
 
@@ -54,8 +60,8 @@ class oTrain:
                   #time.sleep(5)
                #end IF   
             #end While  
-            print(f"Epocks {epocks}")
-            #self.debug_win(epocks, possible_actions, state, reward)
+            #print(f"Epocks {epocks}")
+            self.debug_win(epocks, possible_actions, state, reward)
          #end FOR epocks
       #end Train
       
@@ -85,6 +91,7 @@ class oTrain:
             action       = np.argmax( self.q_table[state] )
             next_state   = try_action(action, player, state)
             reward, done = win_or_loss(next_state, player, base_reward) 
+
             self.q_table[last_state][action] = self.q_table[last_state][action] + learning_rate * (reward + 
                         discount * max(self.q_table[next_state]) - self.q_table[last_state][action])   
 

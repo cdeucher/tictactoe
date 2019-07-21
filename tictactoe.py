@@ -8,14 +8,14 @@ import train as T
 app = Flask(__name__, static_url_path='/static')
                      
 world = T.oTrain()
-world.read_train('q1000.txt')
+world.read_train('easy.txt')
 
 world1 = T.oTrain()
-world1.read_train('q80000.txt')
+world1.read_train('medium.txt')
 
 world2 = T.oTrain()
-#world2.read_train('q200000.txt')
-world2.try_train(500000)
+world2.read_train('hard.txt')
+#world2.try_train(150000)
 
 lvls = [world, world1, world2]
 
@@ -57,6 +57,8 @@ def update(state):
 
 @app.route('/handle/<action>/<statePlayerB>/<statePlayerA>/<lvl>', methods=['POST','GET'])
 def handle(action, statePlayerB, statePlayerA, lvl):
+   statePlayerB    = int(statePlayerB)
+   statePlayerA    = int(statePlayerA)
    lvl    = int(lvl)
    state_playerA, IA_win, done = lvls[lvl].Play1(action, statePlayerB,  statePlayerA)
    state_win = [0,0]
@@ -79,6 +81,7 @@ def handle(action, statePlayerB, statePlayerA, lvl):
       row1,row2,row3,row4,row5,row6,row7,row8,row9 = decode_state(state_win[0])
    else:   
       row1,row2,row3,row4,row5,row6,row7,row8,row9 = decode_state(state_playerB)
+
    ret = { "rows": {
                "row1": row1,
                "row2": row2,
@@ -94,7 +97,11 @@ def handle(action, statePlayerB, statePlayerA, lvl):
          "state_playerA":state_playerA,
          "IA_win":IA_win,
          "done":done,
-         "win":state_win[1]
+         "win":state_win[1],
+         "Play1_old":lvls[lvl].q_table[statePlayerB].tolist(),
+         "Play2_old":lvls[lvl].q_table[statePlayerA].tolist(),
+         "Play1_current":lvls[lvl].q_table[state_playerA].tolist(),
+         "Play2_current":lvls[lvl].q_table[state_playerB].tolist()
    }
    return json.dumps(ret)
 
