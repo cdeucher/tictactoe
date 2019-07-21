@@ -28,6 +28,18 @@ lvls = [world, world1, world2]
 def index():
     return render_template('index.html')
 
+@app.route('/save')
+def save():
+    lvls[0].save_train('easy.txt')
+    lvls[1].save_train('medium.txt')
+    lvls[2].save_train('hard.txt')
+
+@app.route('/reload')
+def reload():
+    lvls[0].read_train('easy.txt')
+    lvls[1].read_train('medium.txt')
+    lvls[2].read_train('hard.txt')
+
 @app.route('/train/<lvl>/<number>')
 def train(lvl, number):
     lvl    = int(lvl)
@@ -59,7 +71,7 @@ def update(state):
 def handle(action, statePlayerB, statePlayerA, lvl):
    statePlayerB    = int(statePlayerB)
    statePlayerA    = int(statePlayerA)
-   lvl    = int(lvl)
+   lvl             = int(lvl)
    state_playerA, IA_win, done = lvls[lvl].Play1(action, statePlayerB,  statePlayerA)
    state_win = [0,0]
    if done == True:

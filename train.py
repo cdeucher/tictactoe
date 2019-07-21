@@ -1,9 +1,9 @@
 import random, time
 import numpy as np
-from tools import encode_state,decode_state, getAllPossibleNextAction, try_action, win_or_loss
+from tools import encode_state,decode_state, getAllPossibleNextAction, try_action, win_or_loss, getAllPossibleValues
 
 #base_reward = [[0.01, 0, 0],[0.01, 50, 5],[0.01, 5, 50]]  ##modo defencivo 
-base_reward = [[0.001, 0, 0],[0.001, 5, 10],[0.001, 10, 5]]  ##modo agrecivo  
+base_reward = [[-0.1, 0, 0],[-0.1, 2, 1],[-0.1, 1, 2]]  ##modo agrecivo  
 state_playerB= 0
 state_playerA= 0
 IA_win       = [[0,0,0],[0,0,0],[0,0,0]]  
@@ -13,7 +13,6 @@ class oTrain:
          self.width = 20000
          self.states= 9
          self.q_table = np.zeros([self.width, self.states])
-         self.current = 0
          self.action  = 0
          self.oldPlayer2 = 0
          self.count_win  = 0
@@ -22,7 +21,7 @@ class oTrain:
          discount      = 0.9
          learning_rate = 0.1                 
          alpha = 0.1
-         gamma = 0.6
+         gamma = 0.6         
          for epocks in range(number):
             state   = 0
             done    = False  
@@ -30,10 +29,12 @@ class oTrain:
             oldA    = 0
             oldB    = 0            
             while not done:   
+               possible_steps   = np.full(9, -99) 
                possible_actions = getAllPossibleNextAction(state) 
-               if possible_actions :  
-                  #if random.uniform(0, 1) < 0.2:
-                  #   action       = np.argmax( self.q_table[state] )
+               possible_steps   = getAllPossibleValues(self.q_table[state], possible_actions)
+               if possible_steps :  
+                  #if random.uniform(0, 1) > 0.2:
+                  #   action       = possible_actions[ np.argmax( possible_steps ) ]
                   #else :
                   #   action       = random.choice(possible_actions) # Explore action space                              
                   action       = random.choice(possible_actions) # Explore action space                              
@@ -56,11 +57,8 @@ class oTrain:
                   #end IF
                else: 
                   done = True
-                  #self.debug(state)
-                  #time.sleep(5)
                #end IF   
             #end While  
-            #print(f"Epocks {epocks}")
             self.debug_win(epocks, possible_actions, state, reward)
          #end FOR epocks
       #end Train
@@ -85,16 +83,19 @@ class oTrain:
          state         = int(state)  
          last_state    = int(last_state)                 
          discount      = 0.9
-         learning_rate = 0.1         
+         learning_rate = 0.1   
+         possible_steps   = np.full(9, -99)  
          possible_actions = getAllPossibleNextAction(state) 
-         if possible_actions : 
-            action       = np.argmax( self.q_table[state] )
+         #print('possible_actions',possible_actions)
+         possible_steps   = getAllPossibleValues(self.q_table[state], possible_actions)
+         if possible_steps :
+            #print('possible_steps',possible_steps)
+            action       = possible_actions[ np.argmax( possible_steps ) ]
             next_state   = try_action(action, player, state)
             reward, done = win_or_loss(next_state, player, base_reward) 
 
             self.q_table[last_state][action] = self.q_table[last_state][action] + learning_rate * (reward + 
                         discount * max(self.q_table[next_state]) - self.q_table[last_state][action])   
-
             return next_state, done
          #end IF
          return 0, False   
@@ -110,7 +111,7 @@ class oTrain:
         reward, done  = win_or_loss(new_state, 1, base_reward)
 
         self.q_table[last_state][action] = self.q_table[last_state][action] + learning_rate * (reward + 
-                    discount * max(self.q_table[new_state]) - self.q_table[last_state][action])    
+                    discount * max(self.q_table[new_state]) - self.q_table[last_state][action])            
 
         return new_state, IA_win, done           
       #end Play1

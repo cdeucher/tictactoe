@@ -108,3 +108,26 @@ def getAllPossibleNextAction(state):
     if(row9 == 0):
         action.append(8)                                                                                 
     return(action)    
+
+def getAllPossibleValues(q_table, arr):
+    action = []
+    if 0 in arr :
+        action.append(q_table[0]) 
+    if 1 in arr :
+        action.append(q_table[1])  
+    if 2 in arr :
+        action.append(q_table[2]) 
+    if 3 in arr :
+        action.append(q_table[3]) 
+    if 4 in arr :
+        action.append(q_table[4]) 
+    if 5 in arr :
+        action.append(q_table[5]) 
+    if 6 in arr :
+        action.append(q_table[6]) 
+    if 7 in arr :
+        action.append(q_table[7]) 
+    if 8 in arr :
+        action.append(q_table[8]) 
+
+    return(action)        

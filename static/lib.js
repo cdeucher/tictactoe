@@ -6,7 +6,7 @@ global_lvl    = 0
 function set_lvl(lvl){
    global_lvl = lvl
    leg =['Fácil','Médio','Difícil']
-   $('#ia').html('<b>I.A ('+leg[global_lvl]+')</b>')
+   $('#ia').html('<b>I.A ('+leg[global_lvl]+') </b>')
 }  
 function set_buttom(row, val){
    if(val == 0){
