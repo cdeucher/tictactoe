@@ -3,19 +3,19 @@ import numpy as np
 import json
 from flask import Flask, escape, request,render_template
 from tools import encode_state,decode_state, getAllPossibleNextAction, try_action, win_or_loss
-
 import train as T
 
 app = Flask(__name__, static_url_path='/static')
                      
 world = T.oTrain()
-world.try_train(5000)
-#world.play()
+world.read_train('q1000.txt')
+
 world1 = T.oTrain()
-world1.try_train(50000)
+world1.read_train('q80000.txt')
 
 world2 = T.oTrain()
-world2.try_train(100000)
+#world2.read_train('q200000.txt')
+world2.try_train(500000)
 
 lvls = [world, world1, world2]
 
