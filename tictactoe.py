@@ -175,7 +175,7 @@ class World_base:
 base_reward = [[0.01, 0, 0],[0.01, 50, 5],[0.01, 5, 50]]    
 win         = [0,0,0]                 
 world = World_base() 
-world.try_train(200)
+world.try_train(150000)
 world.play()
 
 @app.route('/')
