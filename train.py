@@ -3,7 +3,7 @@ import numpy as np
 from tools import encode_state,decode_state, getAllPossibleNextAction, try_action, win_or_loss, getAllPossibleValues
 
 #base_reward = [[0.01, 0, 0],[0.01, 50, 5],[0.01, 5, 50]]  ##modo defencivo 
-base_reward = [[-0.1, 0, 0],[-0.1, 2, 1],[-0.1, 1, 2]]  ##modo agrecivo  
+base_reward = [[0, 0, 0],[0, 2, 100],[0, 100, 2]]  ##modo agrecivo  
 state_playerB= 0
 state_playerA= 0
 IA_win       = [[0,0,0],[0,0,0],[0,0,0]]  
@@ -33,24 +33,26 @@ class oTrain:
                possible_actions = getAllPossibleNextAction(state) 
                possible_steps   = getAllPossibleValues(self.q_table[state], possible_actions)
                if possible_steps :  
-                  #if random.uniform(0, 1) > 0.2:
-                  #   action       = possible_actions[ np.argmax( possible_steps ) ]
-                  #else :
-                  #   action       = random.choice(possible_actions) # Explore action space                              
-                  action       = random.choice(possible_actions) # Explore action space                              
+                  if random.uniform(0, 1) < 0.2:                     
+                     action       = random.choice(possible_actions) # Explore action space   
+                  else :
+                     action       = possible_actions[ np.argmax( possible_steps ) ]                                               
+                  #action       = random.choice(possible_actions) # Explore action space                              
 
                   next_state   = try_action(action, player, state)
                   reward, done = win_or_loss(next_state, player, base_reward)                  
 
+                  old_value = self.q_table[state, action]
+                  next_max = np.max(self.q_table[next_state])
+                  new_value = (1 - alpha) * old_value + alpha * (reward + gamma * next_max)
+
                   if player == 1 :
                      player = 2                  
-                     self.q_table[oldA][action] = self.q_table[oldA][action] + learning_rate * (reward + 
-                        discount * max(self.q_table[next_state]) - self.q_table[oldA][action]) 
+                     self.q_table[oldA][action] = new_value
                      oldA = next_state   
                   else :
                      player = 1                   
-                     self.q_table[oldB][action] = self.q_table[oldB][action] + learning_rate * (reward + 
-                        discount * max(self.q_table[next_state]) - self.q_table[oldB][action])                      
+                     self.q_table[oldB][action] = new_value                    
                      oldB = next_state 
 
                   state = next_state                 
