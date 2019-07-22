@@ -3,7 +3,7 @@ import numpy as np
 from tools import encode_state,decode_state, getAllPossibleNextAction, try_action, win_or_loss, getAllPossibleValues
 
 #base_reward = [[0.01, 0, 0],[0.01, 50, 5],[0.01, 5, 50]]  ##modo defencivo 
-base_reward = [[0, 0, 0],[0, 2, 100],[0, 100, 2]]  ##modo agrecivo  
+base_reward = [[0, 0, 0],[0, 1, 100],[0, 100, 1]]  ##modo agrecivo  
 state_playerB= 0
 state_playerA= 0
 IA_win       = [[0,0,0],[0,0,0],[0,0,0]]  

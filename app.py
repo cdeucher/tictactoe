@@ -12,11 +12,11 @@ world.save_train('easy.txt')
 #world.play_full(1000)
 
 world1 = T.oTrain()
-world1.try_train(1000)
+world1.try_train(2000)
 world1.save_train('medium.txt')
 
 world2 = T.oTrain()
-world2.try_train(1500000)
+world2.try_train(10000000)
 world2.save_train('hard.txt')
 
 lvls = [world, world1, world2]
