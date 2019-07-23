@@ -3,10 +3,7 @@ import numpy as np
 from tools import encode_state,decode_state, getAllPossibleNextAction, try_action, win_or_loss, getAllPossibleValues
 
 #base_reward = [[0.01, 0, 0],[0.01, 50, 5],[0.01, 5, 50]]  ##modo defencivo 
-base_reward = [[0, 0, 0],[0, 1, 100],[0, 100, 1]]  ##modo agrecivo  
-state_playerB= 0
-state_playerA= 0
-IA_win       = [[0,0,0],[0,0,0],[0,0,0]]  
+base_reward = [-0.1, 1, 1]  ##modo agrecivo  
 
 class oTrain:
       def __init__(self): 
@@ -17,15 +14,14 @@ class oTrain:
          self.oldPlayer2 = 0
          self.count_win  = 0
 
-      def try_train(self, number):         
+      def try_train(self, number, player):         
          discount      = 0.9
          learning_rate = 0.1                 
          alpha = 0.1
          gamma = 0.6         
          for epocks in range(number):
             state   = 0
-            done    = False  
-            player  = 1              
+            done    = False         
             oldA    = 0
             oldB    = 0            
             while not done:   
@@ -81,11 +77,12 @@ class oTrain:
             print(f"Epocks {epocks} - Win: {self.count_win} - State: {state}")
             self.count_win = 0
 
+      ## return state, win, draw
       def Play2(self, player, state, last_state):
-         state         = int(state)  
-         last_state    = int(last_state)                 
-         discount      = 0.9
-         learning_rate = 0.1   
+         state            = int(state)  
+         last_state       = int(last_state)                 
+         discount         = 0.9
+         learning_rate    = 0.1   
          possible_steps   = np.full(9, -99)  
          possible_actions = getAllPossibleNextAction(state) 
          #print('possible_actions',possible_actions)
@@ -97,10 +94,17 @@ class oTrain:
             reward, done = win_or_loss(next_state, player, base_reward) 
 
             self.q_table[last_state][action] = self.q_table[last_state][action] + learning_rate * (reward + 
-                        discount * max(self.q_table[next_state]) - self.q_table[last_state][action])   
-            return next_state, done
+                        discount * max(self.q_table[next_state]) - self.q_table[last_state][action]) 
+            
+            #check if has one or more actions
+            if not done :
+               future_steps   = getAllPossibleNextAction(next_state)  
+               if not future_steps :           
+                  return next_state, False, True
+
+            return next_state, done, False
          #end IF
-         return 0, False   
+         return 0, False, True 
       #end Play2
 
       def Play1(self, action, state, last_state):
@@ -115,7 +119,13 @@ class oTrain:
         self.q_table[last_state][action] = self.q_table[last_state][action] + learning_rate * (reward + 
                     discount * max(self.q_table[new_state]) - self.q_table[last_state][action])            
 
-        return new_state, IA_win, done           
+        #check if has one or more actions
+        if not done :       
+            future_steps   = getAllPossibleNextAction(new_state)  
+            if not future_steps :           
+               return new_state, done, True
+
+        return new_state, done, False        
       #end Play1
 
       def debug(self, state):

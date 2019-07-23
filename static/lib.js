@@ -3,10 +3,23 @@ state_playerA = 0
 number_play   = 0
 global_lvl    = 0
 
+$('body').on('hidden.bs.modal', '#centralModalSuccess', function(){ 
+  $('#review').html('');
+  number_play = 0;
+if(global_lvl == 2)
+  send(99)
+});
+
 function set_lvl(lvl){
    global_lvl = lvl
    leg =['Fácil','Médio','Difícil']
+   $('#review').html('');
    $('#ia').html('<b>I.A ('+leg[global_lvl]+') </b>')
+   
+   if(global_lvl == 2)
+     send(99)
+   else
+     update(0,0)  
 }  
 function set_buttom(row, val){
    if(val == 0){
@@ -25,13 +38,10 @@ function win(player){
    $('#player_win').html('Vencedor : '+player) 
    $('#centralModalSuccess').modal({
      keyboard: false
-   }) ; 
-   $('body').on('hidden.bs.modal', '#centralModalSuccess', function(){ 
-        $('#review').html('');
-        number_play = 0;
-   });       
+   }) ;        
 }
 function send(action){ 
+  console.log(action)
   $.post("/handle/"+action+"/"+state_playerB+"/"+state_playerA+"/"+global_lvl, function( data ) {
         play = JSON.parse(data);
         console.log(play);
@@ -48,19 +58,20 @@ function send(action){
         number_play++;   
        if(play.done){
             for(let r in play.rows) 
-              set_buttom(r, '')           
-            if(play.win == 1){
+              set_buttom(r, '')   
+
+            if(play.win[1] == 1){
                 win('Player')
                 update(state_playerA,'win_') 
                 feedback(state_playerA, number_play)  
-            }else if(play.win == 2){  
+            }else if(play.win[1] == 2){  
                 win('I.A')
                 update(state_playerB,'win_') 
                 feedback(state_playerB, number_play)  
             }else{
                 win('Empate')
-                update(state_playerA,'win_')   
-                feedback(state_playerA, number_play)
+                update(play.win[0],'win_')   
+                feedback(play.win[0], number_play)
             }                
        }else{
           feedback(state_playerB, number_play)
@@ -70,7 +81,7 @@ function send(action){
 function feedback(state, number_play){
     $('#review').append('<button id="win_row1" onclick="update('+state+',1)" style="width: 130px;height: 50px;margin: 10px;" type="button" class="btn btn-lg btn-primary" >Jogada #'+number_play+'</button>')
 }
-function update(state, prefix){ 
+function update(state, prefix){     
     prefix = (prefix == 0) ? '' : 'win_';
     $.post("/update/"+state, function( data ) {
           play = JSON.parse(data);

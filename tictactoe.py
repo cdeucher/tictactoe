@@ -6,7 +6,11 @@ from tools import encode_state,decode_state, getAllPossibleNextAction, try_actio
 import train as T
 
 app = Flask(__name__, static_url_path='/static')
-                     
+
+state_playerB= 0
+state_playerA= 0
+IA_win       = [[0,0,0],[0,0,0],[0,0,0]]  
+
 world = T.oTrain()
 world.read_train('easy.txt')
 
@@ -60,9 +64,9 @@ def update(state):
    ret = { "rows": {
                "row1": row1,"row2": row2,"row3": row3,"row4": row4,"row5": row5,"row6": row6,"row7": row7,"row8": row8,"row9": row9
          }, 
-         "state_playerB":T.state_playerB,
-         "state_playerA":T.state_playerA,
-         "IA_win":T.IA_win,
+         "state_playerB":state_playerB,
+         "state_playerA":state_playerA,
+         "IA_win":IA_win,
          "done":False
    }
    return json.dumps(ret)
@@ -72,22 +76,32 @@ def handle(action, statePlayerB, statePlayerA, lvl):
    statePlayerB    = int(statePlayerB)
    statePlayerA    = int(statePlayerA)
    lvl             = int(lvl)
-   state_playerA, IA_win, done = lvls[lvl].Play1(action, statePlayerB,  statePlayerA)
-   state_win = [0,0]
+   action          = int(action)
+   done, draw      = False, False
+   state_win       = [0,0]
+   if action != 99 : #only play Player 2
+      state_playerA, done, draw = lvls[lvl].Play1(action, statePlayerB,  statePlayerA)  
+   else :
+      state_playerA = 0
+
    if done == True:
-      state_playerB = 0  ## player 1 win
-      IA_win[lvl][1]   += 1 
-      state_win   = [state_playerA,1] 
+      state_playerB   = 0    ## player 1 win
+      IA_win[lvl][1]  += 1 
+      state_win       = [state_playerA,1] 
+   elif draw :
+      IA_win[0][0]   += 1    ##empate
+      state_win      = [state_playerA,0] 
+      done           = True           
    else:   
-      state_playerB, done  = lvls[lvl].Play2(2, state_playerA, statePlayerB)
+      state_playerB, done, draw  = lvls[lvl].Play2(2, state_playerA, statePlayerB)
       if done == True:  
          IA_win[0][2]   += 1    ## player 2 win  
-         state_playerA = 0 
-         state_win   = [state_playerB,2] 
-      elif state_playerB == 0 :                   
+         state_playerA  = 0 
+         state_win      = [state_playerB,2] 
+      elif draw :                   
          IA_win[0][0]   += 1    ##empate
-         state_win   = [state_playerA,0] 
-         done        = True     
+         state_win      = [state_playerB,0] 
+         done           = True     
     
    if done == True: 
       row1,row2,row3,row4,row5,row6,row7,row8,row9 = decode_state(state_win[0])
@@ -109,7 +123,7 @@ def handle(action, statePlayerB, statePlayerA, lvl):
          "state_playerA":state_playerA,
          "IA_win":IA_win,
          "done":done,
-         "win":state_win[1],
+         "win":state_win,
          "Play1_old":lvls[lvl].q_table[statePlayerB].tolist(),
          "Play2_old":lvls[lvl].q_table[statePlayerA].tolist(),
          "Play1_current":lvls[lvl].q_table[state_playerA].tolist(),

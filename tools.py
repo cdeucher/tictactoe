@@ -43,25 +43,25 @@ def decode_state(state):
 def win_or_loss(state, player, base_reward): 
     row1,row2,row3,row4,row5,row6,row7,row8,row9 = decode_state(state)
     if row1 == player and row2 == player and row3 == player:
-        return base_reward[player][player], True
+        return base_reward[player], True
     if row4 == player and row5 == player and row6 == player:
-        return base_reward[player][player], True
+        return base_reward[player], True
     if row7 == player and row8 == player and row9 == player:
-        return base_reward[player][player], True
+        return base_reward[player], True
 
     if row1 == player and row4 == player and row7 == player:
-        return base_reward[player][player], True
+        return base_reward[player], True
     if row2 == player and row5 == player and row8 == player:
-        return base_reward[player][player], True
+        return base_reward[player], True
     if row3 == player and row6 == player and row9 == player:
-        return base_reward[player][player], True                                    
+        return base_reward[player], True                                    
 
     if row1 == player and row5 == player and row9 == player:
-        return base_reward[player][player], True
+        return base_reward[player], True
     if row7 == player and row5 == player and row3 == player:
-        return base_reward[player][player], True   
+        return base_reward[player], True   
 
-    return base_reward[0][0], False
+    return base_reward[0], False
 #end win_or_loss   
 
 def try_action(action, player, state):
