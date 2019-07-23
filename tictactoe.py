@@ -37,12 +37,14 @@ def save():
     lvls[0].save_train('easy.txt')
     lvls[1].save_train('medium.txt')
     lvls[2].save_train('hard.txt')
+    return render_template('index.html') 
 
 @app.route('/reload')
 def reload():
     lvls[0].read_train('easy.txt')
     lvls[1].read_train('medium.txt')
     lvls[2].read_train('hard.txt')
+    return render_template('index.html') 
 
 @app.route('/train/<lvl>/<number>')
 def train(lvl, number):
@@ -73,14 +75,14 @@ def update(state):
 
 @app.route('/handle/<action>/<statePlayerB>/<statePlayerA>/<lvl>', methods=['POST','GET'])
 def handle(action, statePlayerB, statePlayerA, lvl):
-   statePlayerB    = int(statePlayerB)
-   statePlayerA    = int(statePlayerA)
+   state_playerB    = int(statePlayerB)
+   state_playerA    = int(statePlayerA)
    lvl             = int(lvl)
    action          = int(action)
    done, draw      = False, False
    state_win       = [0,0]
    if action != 99 : #only play Player 2
-      state_playerA, done, draw = lvls[lvl].Play1(action, statePlayerB,  statePlayerA)  
+      state_playerA, done, draw = lvls[lvl].Play1(action, state_playerB,  state_playerA)  
    else :
       state_playerA = 0
 
@@ -93,7 +95,7 @@ def handle(action, statePlayerB, statePlayerA, lvl):
       state_win      = [state_playerA,0] 
       done           = True           
    else:   
-      state_playerB, done, draw  = lvls[lvl].Play2(2, state_playerA, statePlayerB)
+      state_playerB, done, draw  = lvls[lvl].Play2(2, state_playerA, state_playerB)
       if done == True:  
          IA_win[0][2]   += 1    ## player 2 win  
          state_playerA  = 0 
@@ -124,8 +126,6 @@ def handle(action, statePlayerB, statePlayerA, lvl):
          "IA_win":IA_win,
          "done":done,
          "win":state_win,
-         "Play1_old":lvls[lvl].q_table[statePlayerB].tolist(),
-         "Play2_old":lvls[lvl].q_table[statePlayerA].tolist(),
          "Play1_current":lvls[lvl].q_table[state_playerA].tolist(),
          "Play2_current":lvls[lvl].q_table[state_playerB].tolist()
    }
