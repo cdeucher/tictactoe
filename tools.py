@@ -1,3 +1,5 @@
+import numpy as np
+
 def encode_state(row1,row2,row3,row4,row5,row6,row7,row8,row9):    
     i = row1
     i *= 3
@@ -130,4 +132,9 @@ def getAllPossibleValues(q_table, arr):
     if 8 in arr :
         action.append(q_table[8]) 
 
-    return(action)        
+    return(action)     
+
+def backpro(q_table, win,act,reward):
+    #print(win[-3:],win)          
+    for i in range(len(win)):          
+      q_table[ win[i], act[i] ] = (q_table[ win[i], act[i] ] * reward)

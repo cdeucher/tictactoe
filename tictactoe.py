@@ -22,7 +22,8 @@ world2.read_train('hard.txt')
 #world2.try_train(150000)
 
 lvls = [world, world1, world2]
-
+winA,winB = [],[]          
+actA,actB = [],[]
 ##
 ##
 ## WEB CLIENT

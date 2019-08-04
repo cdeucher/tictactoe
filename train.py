@@ -1,6 +1,6 @@
 import random, time
 import numpy as np
-from tools import encode_state,decode_state, getAllPossibleNextAction, try_action, win_or_loss, getAllPossibleValues
+from tools import encode_state,decode_state, getAllPossibleNextAction, try_action, win_or_loss, getAllPossibleValues, backpro
 
 #base_reward = [[0.01, 0, 0],[0.01, 50, 5],[0.01, 5, 50]]  ##modo defencivo 
 base_reward = [-0.1, 1, 1]  ##modo agrecivo  
@@ -20,10 +20,11 @@ class oTrain:
          alpha = 0.1
          gamma = 0.6         
          for epocks in range(number):
-            state   = 0
-            done    = False         
-            oldA    = 0
-            oldB    = 0            
+            state     = 0
+            done      = False         
+            oldA,oldB = 0,0  
+            winA,winB = [],[]          
+            actA,actB = [],[]
             while not done:   
                possible_steps   = np.full(9, -99) 
                possible_actions = getAllPossibleNextAction(state) 
@@ -44,19 +45,29 @@ class oTrain:
 
                   if player == 1 :
                      player = 2                  
-                     self.q_table[oldA][action] = new_value
-                     oldA = next_state   
+                     self.q_table[oldA][action] = new_value                     
+                     winA.append(oldA) 
+                     actA.append(action) 
+                     oldA = next_state
+                     if done :
+                        backpro(self.q_table, winA, actA, 0.1) 
+                        backpro(self.q_table, winB, actB,-0.1)             
                   else :
                      player = 1                   
-                     self.q_table[oldB][action] = new_value                    
+                     self.q_table[oldB][action] = new_value                                         
+                     winB.append(oldB)
+                     actB.append(action) 
                      oldB = next_state 
+                     if done :
+                        backpro(self.q_table, winB, actB, 0.1)                        
+                        backpro(self.q_table, winA, actA,-0.1) 
 
                   state = next_state                 
                   #end IF
                else: 
                   done = True
                #end IF   
-            #end While  
+            #end While             
             self.debug_win(epocks, possible_actions, state, reward)
          #end FOR epocks
       #end Train
