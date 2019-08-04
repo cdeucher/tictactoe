@@ -59,9 +59,10 @@ def clean(lvl):
     lvls[lvl].q_table = np.zeros([lvls[lvl].width, lvls[lvl].states])
     return render_template('index.html')   
 
-@app.route('/update/<state>', methods=['POST','GET'])
-def update(state):  
+@app.route('/update/<state>/<lvl>', methods=['POST','GET'])
+def update(state, lvl):  
    state = int(state)
+   lvl   = int(lvl)
    row1,row2,row3,row4,row5,row6,row7,row8,row9 = decode_state(state)
    ret = { "rows": {
                "row1": row1,"row2": row2,"row3": row3,"row4": row4,"row5": row5,"row6": row6,"row7": row7,"row8": row8,"row9": row9
@@ -69,6 +70,7 @@ def update(state):
          "state_playerB":state_playerB,
          "state_playerA":state_playerA,
          "IA_win":IA_win,
+         "state":lvls[lvl].q_table[state].tolist(),    
          "done":False
    }
    return json.dumps(ret)

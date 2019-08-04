@@ -5,18 +5,16 @@ from tools import encode_state,decode_state, getAllPossibleNextAction, try_actio
 import train as T
 
 world = T.oTrain()
-world.try_train(1000, 1)
-world.try_train(1000, 2)
+world.try_train(1, 1)
 world.save_train('easy.txt')
 
 world1 = T.oTrain()
-world1.try_train(2000, 1)
-world1.try_train(2000, 2)
+world1.try_train(2000000, 1)
 world1.save_train('medium.txt')
 
 world2 = T.oTrain()
-world2.try_train(400000, 1)
-world2.try_train(400000, 2)
+world2.try_train(10000, 1)
+world2.try_train(10000, 2)
 world2.save_train('hard.txt')
 
 lvls = [world, world1, world2]
